@@ -18,4 +18,9 @@ public class CategoryService{
         category.setParentId(id);
         return categoryMapper.select(category) ;
     }
+
+    //品牌编辑 查一个
+    public List<Category> queryByBrandId(Long id) {
+       return categoryMapper.queryByBrandId(id);
+    }
 }

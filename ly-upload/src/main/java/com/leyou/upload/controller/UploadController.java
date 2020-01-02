@@ -1,6 +1,6 @@
-package com.bigdata.upload.controller;
+package com.leyou.upload.controller;
 
-import com.bigdata.upload.service.UploadService;
+import com.leyou.upload.service.UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

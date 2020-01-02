@@ -50,4 +50,17 @@ public class BrandService {
             brandMapper.insertBrandCategory(i,brand.getId());
         }
     }
+
+    @Transactional
+    public void updateBrand(Brand brand, List<Long> cids) {
+        //更新tb_brand
+        this.brandMapper.updateByPrimaryKey(brand);
+        //删除原来的表
+        this.brandMapper.deleteBrandcategory(brand.getId());
+        //新增 关联关系表
+        cids.forEach(t->{
+            brandMapper.insertBrandCategory(t,brand.getId());
+        });
+
+    }
 }

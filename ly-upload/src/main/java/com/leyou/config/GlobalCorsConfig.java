@@ -1,4 +1,4 @@
-package com.bigdata.config;
+package com.leyou.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
