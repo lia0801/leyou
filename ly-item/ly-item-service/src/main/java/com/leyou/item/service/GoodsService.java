@@ -23,7 +23,7 @@ public class GoodsService {
     @Autowired
     SpuMapper spuMapper;
     @Autowired
-    SpuDetailMapper detailMapper;
+    SpuDetailMapper spuDetailMapper;
     @Autowired
     CategoryService categoryService;
     @Autowired
@@ -78,7 +78,7 @@ public class GoodsService {
         Long id=spuBo.getId();
         SpuDetail spuDetail=spuBo.getSpuDetail();
         spuDetail.setSpuId(id);
-        detailMapper.insert(spuDetail);
+        spuDetailMapper.insert(spuDetail);
         List<Sku> skus = spuBo.getSkus();
         //保存sku和库存表
         saveskus(spuBo,skus);
@@ -99,8 +99,9 @@ public class GoodsService {
         }
     }
 
+    //回显
     public SpuDetail querySpuDetailBySpuId(Long id) {
-        return  detailMapper.selectByPrimaryKey(id);
+        return  spuDetailMapper.selectByPrimaryKey(id);
     }
 
     public List<Sku> querySkuBySpuId(Long id) {
@@ -121,7 +122,7 @@ public class GoodsService {
         spuBo.setLastUpdateTime(new Date());
         spuMapper.updateByPrimaryKeySelective(spuBo);
 
-        detailMapper.updateByPrimaryKeySelective(spuBo.getSpuDetail());
+        spuDetailMapper.updateByPrimaryKeySelective(spuBo.getSpuDetail());
 
         //先删除当前spu对应的所有的sku，然后重新添加
         //先查，再根据查到的结果删除

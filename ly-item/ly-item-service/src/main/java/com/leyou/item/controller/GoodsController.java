@@ -17,6 +17,7 @@ public class GoodsController {
     @Autowired
     GoodsService goodsService;
 
+    //分页
     @GetMapping("spu/page")
     public ResponseEntity<PageResult<SpuBo>> querySpuByPage(@RequestParam(value = "key",required = false) String key,
                                                             @RequestParam(value = "saleable",required = false) Boolean saleable,
@@ -29,6 +30,8 @@ public class GoodsController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+
+    //添加
     @PostMapping("goods")
     public ResponseEntity<Void> saveGoods(@RequestBody SpuBo spuBo){
         goodsService.saveGoods(spuBo);

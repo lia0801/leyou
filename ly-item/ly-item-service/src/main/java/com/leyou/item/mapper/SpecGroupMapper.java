@@ -15,7 +15,5 @@ public interface SpecGroupMapper extends Mapper<SpecGroup> {
     @Update("update tb_spec_group set name=#{name} where id=#{id}")
     void updateGroup(@Param("id") Long id,@Param("name") String name);
 
-    @Delete("delete from tb_spec_group where id=#{id}")
-    void deleteGroup(@Param("id") Long id);
 
 }
