@@ -63,4 +63,8 @@ public class BrandService {
         });
 
     }
+
+    public List<Brand> queryBrandByCategory(Long id) {
+        return brandMapper.queryBrandByCategory(id);
+    }
 }

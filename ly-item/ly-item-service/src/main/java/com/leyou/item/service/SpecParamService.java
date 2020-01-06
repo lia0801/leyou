@@ -41,4 +41,20 @@ public class SpecParamService {
         List<SpecParam> specParams = specParamMapper.select(specParam);
         return specParams;
     }
+
+    //add规格参数
+    public void addGroup(SpecGroup specGroup) {
+        specGroupMapper.addGroup(specGroup.getId(),specGroup.getCid(),specGroup.getName());
+    }
+
+
+    //修改规格参数
+    public void updateGroup(SpecGroup specGroup) {
+        specGroupMapper.updateGroup(specGroup.getId(),specGroup.getName());
+    }
+
+    //删除
+    public void deleteGroup(Long id) {
+        specGroupMapper.deleteByPrimaryKey(id);
+    }
 }

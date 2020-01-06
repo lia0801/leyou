@@ -4,19 +4,18 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.leyou.common.po.PageResult;
 import com.leyou.item.bo.SpuBo;
-import com.leyou.item.mapper.BrandMapper;
-import com.leyou.item.mapper.SpuDetailMapper;
-import com.leyou.item.mapper.SpuMapper;
-import com.leyou.item.pojo.Brand;
-import com.leyou.item.pojo.Spu;
+import com.leyou.item.mapper.*;
+import com.leyou.item.pojo.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -29,6 +28,10 @@ public class GoodsService {
     CategoryService categoryService;
     @Autowired
     BrandMapper brandMapper;
+    @Autowired
+    SkuMapper skuMapper;
+    @Autowired
+    StockMapper stockMapper;;
 
     public PageResult<SpuBo> querySpuByPage(String key, Boolean saleable, Integer page, Integer rows) {
         //开启分页
@@ -61,5 +64,78 @@ public class GoodsService {
             spuBos.add(spuBo);
         }
         return new PageResult<>(spuPage.getTotal(),new Long(spuPage.getPages()),spuBos);
+    }
+
+    //商品添加
+    @Transactional
+    public void saveGoods(SpuBo spuBo) {
+        spuBo.setSaleable(true);
+        spuBo.setValid(true);
+        spuBo.setCreateTime(new Date());
+        spuBo.setLastUpdateTime(new Date());
+        //保存数据
+        spuMapper.insertSelective(spuBo);
+        Long id=spuBo.getId();
+        SpuDetail spuDetail=spuBo.getSpuDetail();
+        spuDetail.setSpuId(id);
+        detailMapper.insert(spuDetail);
+        List<Sku> skus = spuBo.getSkus();
+        //保存sku和库存表
+        saveskus(spuBo,skus);
+    }
+
+    //保存sku表
+    private void saveskus(SpuBo spuBo, List<Sku> skus) {
+        for (Sku s:skus){
+            s.setSpuId(spuBo.getId());
+            s.setCreateTime(new Date());
+            s.setLastUpdateTime(new Date());
+            //保存
+            skuMapper.insertSelective(s);
+            Stock stock = new Stock();
+            stock.setSkuId(s.getId());
+            stock.setStock(s.getStock());
+            stockMapper.insert(stock);
+        }
+    }
+
+    public SpuDetail querySpuDetailBySpuId(Long id) {
+        return  detailMapper.selectByPrimaryKey(id);
+    }
+
+    public List<Sku> querySkuBySpuId(Long id) {
+        Sku sku = new Sku();
+        sku.setSpuId(id);
+        List<Sku> skuList=skuMapper.select(sku);
+        for (Sku s:skuList){
+            Long id1 = s.getId();
+            Stock stock = stockMapper.selectByPrimaryKey(id1);
+            s.setStock(stock.getStock());
+        }
+        return skuList;
+    }
+
+    public void updateGoods(SpuBo spuBo) {
+
+//spu，spuDetail可以直接更新
+        spuBo.setLastUpdateTime(new Date());
+        spuMapper.updateByPrimaryKeySelective(spuBo);
+
+        detailMapper.updateByPrimaryKeySelective(spuBo.getSpuDetail());
+
+        //先删除当前spu对应的所有的sku，然后重新添加
+        //先查，再根据查到的结果删除
+        Sku record = new Sku();
+        record.setSpuId(spuBo.getId());
+        //从数据库中查询到的skus
+        List<Sku> skus = skuMapper.select(record);
+        //根据sku信息，删除对应数据库中的信息
+        //删除库存数据
+        for (Sku s:skus){
+            stockMapper.deleteByPrimaryKey(s.getId());
+            this.skuMapper.delete(s);
+        }
+       //新增
+        saveskus(spuBo, spuBo.getSkus());
     }
 }

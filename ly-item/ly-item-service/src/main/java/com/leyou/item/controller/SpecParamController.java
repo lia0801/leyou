@@ -36,5 +36,24 @@ public class SpecParamController {
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
+//    /spec/group
+    //添加规格参数
+    @PostMapping("group")
+    public ResponseEntity<Void> addGroup(@RequestBody SpecGroup specGroup){
+        specParamService.addGroup(specGroup);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+    //修改规格参数
+    @PutMapping("group")
+    public ResponseEntity<Void> updateGroup(@RequestBody SpecGroup specGroup){
+        specParamService.updateGroup(specGroup);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 
+    //删除
+    @DeleteMapping("group/{id}")
+    public ResponseEntity<Void> deleteGroup(@PathVariable Long id){
+        specParamService.deleteGroup(id);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 }
