@@ -33,5 +33,14 @@ public class CategoryController {
         return  ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
+    //给fe提供接口 ,提供搜索微服务
+    @GetMapping("names")
+    public ResponseEntity<List<String>> queryNamesByIds(@RequestParam("ids") List<Long> ids){
+        List<String> list = categoryService.queryNameByIds(ids);
+        if(list!=null&&list.size()>0){
+            return ResponseEntity.ok(list);
+        }
+        return  ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
 
 }

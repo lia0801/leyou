@@ -118,7 +118,7 @@ public class GoodsService {
 
     public void updateGoods(SpuBo spuBo) {
 
-//spu，spuDetail可以直接更新
+        //spu，spuDetail可以直接更新
         spuBo.setLastUpdateTime(new Date());
         spuMapper.updateByPrimaryKeySelective(spuBo);
 
@@ -138,5 +138,9 @@ public class GoodsService {
         }
        //新增
         saveskus(spuBo, spuBo.getSkus());
+    }
+
+    public Spu querySpuById(Long spuId) {
+        return spuMapper.selectByPrimaryKey(spuId);
     }
 }

@@ -17,8 +17,8 @@ public class SpecParamController {
     SpecParamService specParamService;
 
     @GetMapping("groups/{cid}")
-    public ResponseEntity<List<SpecGroup>> querySpecGronp(@PathVariable("cid") Long id){
-        List<SpecGroup> specGroupList=specParamService.querySpecGronp(id);
+    public ResponseEntity<List<SpecGroup>> querySpecGroups(@PathVariable("cid") Long id){
+        List<SpecGroup> specGroupList=specParamService.querySpecGroups(id);
         if(null!=specGroupList&&specGroupList.size()>0){
             return ResponseEntity.ok(specGroupList);
         }

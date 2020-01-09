@@ -17,7 +17,7 @@ public class SpecParamService {
     @Autowired
     SpecGroupMapper specGroupMapper;
 
-    public List<SpecGroup> querySpecGronp(Long id) {
+    public List<SpecGroup> querySpecGroups(Long id) {
         SpecGroup specGroup=new SpecGroup();
         specGroup.setCid(id);
         //通过分类的Id查询规格参数
