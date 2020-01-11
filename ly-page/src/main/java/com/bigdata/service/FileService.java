@@ -56,4 +56,9 @@ public class FileService {
         }
 
     }
+
+    public void deletePage(Long id) {
+        File file = new File(destPath,id+".html");
+        file.deleteOnExit();
+    }
 }

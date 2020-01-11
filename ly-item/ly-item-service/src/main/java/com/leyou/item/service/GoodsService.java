@@ -7,6 +7,7 @@ import com.leyou.item.bo.SpuBo;
 import com.leyou.item.mapper.*;
 import com.leyou.item.pojo.*;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,10 @@ import java.util.List;
 
 @Service
 public class GoodsService {
+
+    @Autowired
+    AmqpTemplate amqpTemplate;
+
     @Autowired
     SpuMapper spuMapper;
     @Autowired
@@ -82,6 +87,9 @@ public class GoodsService {
         List<Sku> skus = spuBo.getSkus();
         //保存sku和库存表
         saveskus(spuBo,skus);
+
+        //发送消息
+        sendMessage(id,"insert");
     }
 
     //保存sku表
@@ -127,7 +135,8 @@ public class GoodsService {
         //先删除当前spu对应的所有的sku，然后重新添加
         //先查，再根据查到的结果删除
         Sku record = new Sku();
-        record.setSpuId(spuBo.getId());
+        Long id = spuBo.getId();//商品的Id
+        record.setSpuId(id);
         //从数据库中查询到的skus
         List<Sku> skus = skuMapper.select(record);
         //根据sku信息，删除对应数据库中的信息
@@ -138,9 +147,21 @@ public class GoodsService {
         }
        //新增
         saveskus(spuBo, spuBo.getSkus());
+
+        //发送消息
+        sendMessage(id,"update");
     }
 
     public Spu querySpuById(Long spuId) {
         return spuMapper.selectByPrimaryKey(spuId);
+    }
+
+    //封装消息 发送消息
+    public void sendMessage(Long id,String type){
+        //发送商品的Id
+        amqpTemplate.convertAndSend("item."+type,id);
+        //item.insert
+
+        //item.update
     }
 }

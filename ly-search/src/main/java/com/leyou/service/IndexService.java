@@ -8,14 +8,17 @@ import com.leyou.common.utils.JsonUtils;
 import com.leyou.item.bo.SpuBo;
 import com.leyou.item.pojo.Sku;
 import com.leyou.item.pojo.SpecParam;
+import com.leyou.item.pojo.Spu;
 import com.leyou.item.pojo.SpuDetail;
 import com.leyou.pojo.Goods;
+import com.leyou.repository.GoodsRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.*;
 
 @Service
@@ -28,6 +31,9 @@ public class IndexService {
 
     @Autowired
     SpecClient specClient;
+
+    @Autowired
+    GoodsRepository goodsRepository;
 
     public Goods buildGoods(SpuBo spuBo) {
         Goods goods = new Goods();
@@ -138,4 +144,23 @@ public class IndexService {
         }
         return result;
     }
+
+    public void createIndex(Long id) {
+
+        //查询商品spu
+        Spu spu = goodsClient.querySpuById(id);
+        SpuBo spuBo = new SpuBo();
+        BeanUtils.copyProperties(spu,spuBo);
+        Goods goods = buildGoods(spuBo);
+
+        //更新/新增索引
+        goodsRepository.save(goods);
+
+
+    }
+
+    public void deleteIndex(Long id) {
+        goodsRepository.deleteById(id);
+    }
+
 }
